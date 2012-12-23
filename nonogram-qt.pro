@@ -15,3 +15,4 @@ SOURCES += linesolver.cpp \
            nonogram.cpp \
            pushbutton.cpp \
            solver.cpp
+RESOURCES += nonogram-qt.qrc

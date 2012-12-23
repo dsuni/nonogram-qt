@@ -281,7 +281,7 @@ void MainWindow::checkSolution() {
 void MainWindow::about() {
 	QMessageBox mb;
 	mb.setWindowTitle("About");
-	mb.setText("<p><center>nonogram-qt</center></p><p>Copyright: Daniel Suni, 2012</p><p>Distributed under the GNU GPL v3</p>");
+	mb.setText("<p><h3>Nonogram-qt 0.9.2</h3></p><p>Copyright: Daniel Suni, 2012</p><p>Distributed under the GNU GPL v3</p>");
 	mb.exec();
 }
 

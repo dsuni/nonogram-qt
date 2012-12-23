@@ -1,5 +1,5 @@
 /*
-	nonogram-qt version 0.9.1, released 6 Dec 2012
+	nonogram-qt version 0.9.2, released 23 Dec 2012
 
 	Copyright 2012 Daniel Suni
 
@@ -21,6 +21,7 @@
 
 int main(int argc, char *argv[]) {
 	QApplication app(argc, argv);
+	app.setWindowIcon(QIcon(":/icon.png"));
 	MainWindow mw;
 	mw.show();
 	return app.exec();
