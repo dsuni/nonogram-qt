@@ -3,15 +3,15 @@
 MainWindow::MainWindow(QWidget *parent) {
 	window = new QWidget();
 	menu = new QMenuBar(window);
-	fileMenu = new QMenu("&File", window);
-	helpMenu = new QMenu("&Help", window);
+	fileMenu = new QMenu(tr("&File"), window);
+	helpMenu = new QMenu(tr("&Help"), window);
 	menu->addMenu(fileMenu);
 	menu->addMenu(helpMenu);
-	exitAction = new QAction("E&xit", fileMenu);
+	exitAction = new QAction(tr("E&xit"), fileMenu);
 	connect(exitAction, SIGNAL(triggered()), this, SLOT(quit()));
-	helpAction = new QAction("&Help", helpMenu);
+	helpAction = new QAction(tr("&Help"), helpMenu);
 	connect(helpAction, SIGNAL(triggered()), this, SLOT(help()));
-	aboutAction = new QAction("&About", helpMenu);
+	aboutAction = new QAction(tr("&About"), helpMenu);
 	connect(aboutAction, SIGNAL(triggered()), this, SLOT(about()));
 	fileMenu->addAction(exitAction);
 	helpMenu->addAction(helpAction);
@@ -29,11 +29,11 @@ MainWindow::MainWindow(QWidget *parent) {
 	heightBox->setRange(MIN_PUZZLE_SIZE, MAX_PUZZLE_SIZE);
 	widthBox->setValue(DEFAULT_PUZZLE_SIZE);
 	heightBox->setValue(DEFAULT_PUZZLE_SIZE);
-	widthLabel = new QLabel("Columns:", window);
-	heightLabel = new QLabel("Rows:", window);
-	generate = new QPushButton("Generate puzzle", this);
+	widthLabel = new QLabel(tr("Columns:"), window);
+	heightLabel = new QLabel(tr("Rows:"), window);
+	generate = new QPushButton(tr("Generate puzzle"), this);
 	connect(generate, SIGNAL(clicked()), this, SLOT(generatePuzzle()));
-	surrender = new QPushButton("Give up", this);
+	surrender = new QPushButton(tr("Give up"), this);
 	connect(surrender, SIGNAL(clicked()), this, SLOT(giveUp()));
 	surrender->setEnabled(false);
 	ngram = NULL;
@@ -81,18 +81,18 @@ void MainWindow::generatePuzzle() {
 	// Using mappers allows us to easily identify the button that sent the signal.
 	mapperLeftButton = new QSignalMapper(this);
 	mapperRightButton = new QSignalMapper(this);
-	ngram = new nonogram(width, height);
-	x_axis_clue = ngram->get_x_axis();
-	y_axis_clue = ngram->get_y_axis();
-	solver *solv = new solver(width, height, x_axis_clue, y_axis_clue);
+	ngram = new Nonogram(width, height);
+	xAxisClue = ngram->getXAxis();
+	yAxisClue = ngram->getYAxis();
+	Solver *solv = new Solver(width, height, xAxisClue, yAxisClue);
 	// Retry puzzle creation until we get a solvable one.
 	while (!solv->solve()) {
 		delete solv;
 		delete ngram;
-		ngram = new nonogram(width, height);
-		x_axis_clue = ngram->get_x_axis();
-		y_axis_clue = ngram->get_y_axis();
-		solv = new solver(width, height, x_axis_clue, y_axis_clue);
+		ngram = new Nonogram(width, height);
+		xAxisClue = ngram->getXAxis();
+		yAxisClue = ngram->getYAxis();
+		solv = new Solver(width, height, xAxisClue, yAxisClue);
 	}
 	delete solv;
 	// Create and add the clue labels
@@ -101,38 +101,38 @@ void MainWindow::generatePuzzle() {
 	for (int i = 0; i < width; ++i) {
 		QString str = "";
 		QString num = "";
-		for (int j = 0; j < x_axis_clue[i]->size(); ++j) {
-			num.setNum(x_axis_clue[i]->at(j), 10);
+		for (int j = 0; j < xAxisClue[i]->size(); ++j) {
+			num.setNum(xAxisClue[i]->at(j), 10);
 			str.append(num);
-			if (j < x_axis_clue[i]->size() - 1) {
+			if (j < xAxisClue[i]->size() - 1) {
 				str.append("\n");
 			}
 		}
-		x_axis.push_back(new QLabel(str));
-		x_axis.at(i)->setAlignment(Qt::AlignCenter | Qt::AlignBottom);
+		xAxis.push_back(new QLabel(str));
+		xAxis.at(i)->setAlignment(Qt::AlignCenter | Qt::AlignBottom);
 		// We want to separate the UI buttons in 5 x 5 chunks, so that counting
 		// blocks becomes easier for the user.
 		if (i > 0 && i % 5 == 0) {
 			++spacer_x;
 			grid->setColumnMinimumWidth(i + spacer_x, 2);
 		}
-		grid->addWidget(x_axis.at(i), 0, i + spacer_x + 1);
+		grid->addWidget(xAxis.at(i), 0, i + spacer_x + 1);
 	}
 	for (int i = 0; i < height; ++i) {
 		QString str = "";
 		QString num = "";
-		for (int j = 0; j < y_axis_clue[i]->size(); ++j) {
-			num.setNum(y_axis_clue[i]->at(j), 10);
+		for (int j = 0; j < yAxisClue[i]->size(); ++j) {
+			num.setNum(yAxisClue[i]->at(j), 10);
 			str.append(num);
 			str.append("  ");
 		}
-		y_axis.push_back(new QLabel(str));
-		y_axis.at(i)->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+		yAxis.push_back(new QLabel(str));
+		yAxis.at(i)->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 		if (i > 0 && i % 5 == 0) {
 			++spacer_y;
 			grid->setRowMinimumHeight(i + spacer_y, 2);
 		}
-		grid->addWidget(y_axis.at(i), i + spacer_y + 1, 0);
+		grid->addWidget(yAxis.at(i), i + spacer_y + 1, 0);
 	}
 	// Create the playing field itself.
 	spacer_y = 0;
@@ -167,14 +167,14 @@ void MainWindow::generatePuzzle() {
 void MainWindow::cleanUp() {
 	delete ngram;
 	ngram = NULL;
-	for (int i = 0; i < x_axis.size(); ++i) {
-		delete x_axis.at(i);
+	for (int i = 0; i < xAxis.size(); ++i) {
+		delete xAxis.at(i);
 	}
-	x_axis.clear();
-	for (int i = 0; i < y_axis.size(); ++i) {
-		delete y_axis.at(i);
+	xAxis.clear();
+	for (int i = 0; i < yAxis.size(); ++i) {
+		delete yAxis.at(i);
 	}
-	y_axis.clear();
+	yAxis.clear();
 	for (int i = 0; i < width * height; ++i) {
 		delete puzzle.at(i);
 	}
@@ -195,11 +195,11 @@ void MainWindow::giveUp() {
 			mask >>= 1;
 			pos = i * width + j;
 			if (status.at(pos) == SOLID) {
-				if (!(ngram->get_field()[i] & mask)) {
+				if (!(ngram->getField()[i] & mask)) {
 					puzzle.at(pos)->setStyleSheet("background-color: rgb(255, 0, 0)");
 				}
 			}
-			else if (ngram->get_field()[i] & mask) {
+			else if (ngram->getField()[i] & mask) {
 				puzzle.at(pos)->setStyleSheet("background-color: rgb(150, 150, 150)");
 			}
 		}
@@ -261,7 +261,7 @@ void MainWindow::checkSolution() {
 				test |= mask;
 			}
 		}
-		if (test != ngram->get_field()[i]) {
+		if (test != ngram->getField()[i]) {
 			return;
 		}
 	}
@@ -269,8 +269,8 @@ void MainWindow::checkSolution() {
 		puzzle.at(i)->setEnabled(false);
 	}
 	QMessageBox mb;
-	mb.setWindowTitle("Well done");
-	mb.setText("You have solved the puzzle!");
+	mb.setWindowTitle(tr("Well done"));
+	mb.setText(tr("You have solved the puzzle!"));
 	mb.exec();
 	widthBox->setEnabled(true);
 	heightBox->setEnabled(true);
@@ -280,16 +280,16 @@ void MainWindow::checkSolution() {
 
 void MainWindow::about() {
 	QMessageBox mb;
-	mb.setWindowTitle("About");
-	mb.setText("<p><h3>Nonogram-qt 0.9.2</h3></p><p>Copyright: Daniel Suni, 2012</p><p>Distributed under the GNU GPL v3</p>");
+	mb.setWindowTitle(tr("About"));
+	mb.setText(tr("<p><h3>Nonogram-qt 1.0.0</h3></p><p>Copyright: Daniel Suni, 2012, 2013</p><p>Distributed under the GNU GPL v3</p>"));
 	mb.exec();
 }
 
 void MainWindow::help() {
 	QWidget *helpWindow = new QWidget();
-	helpWindow->setWindowTitle("Help");
+	helpWindow->setWindowTitle(tr("Help"));
 	QHBoxLayout *bl = new QHBoxLayout(helpWindow);
-	QLabel *text = new QLabel("<h2>What are nonograms?</h2>\
+	QLabel *text = new QLabel(tr("<h2>What are nonograms?</h2>\
 <p>Nonograms are logic puzzles consisting of a rectangular grid divided into cells. These cells can be either<br>\
 colored (solids) or blank (dots). At the start of the game all cells are blank, and the purpose of the game is<br>\
 to figure out which ones should be colored.</p>\
@@ -311,7 +311,7 @@ exists for your own convenience.</p>\
 <p>Every time you make a move the computer will automatically check whether you've successfully solved the puzzle<br>\
  or not. Once the puzzle is solved, you will immediately be informed. If the puzzle turns out to be too hard, you can<br>\
 end it, and look at the solution by pressing the &quot;Give up&quot; button. Remaining solids will be displayed in<br>\
-grey, and possible mistakes (i.e. dots marked as solids) will be displayed in red.</p>", helpWindow);
+grey, and possible mistakes (i.e. dots marked as solids) will be displayed in red.</p>"), helpWindow);
 	helpWindow->setLayout(bl);
 	bl->addWidget(text);
 	helpWindow->show();

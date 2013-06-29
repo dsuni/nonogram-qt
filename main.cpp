@@ -1,7 +1,7 @@
 /*
-	nonogram-qt version 0.9.2, released 23 Dec 2012
+	nonogram-qt version 1.0.0, released 29 Jun 2013
 
-	Copyright 2012 Daniel Suni
+	Copyright 2012, 2013 Daniel Suni
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -17,10 +17,15 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <QApplication>
+#include <QTranslator>
+#include <QLocale>
 #include "mainwindow.h"
 
 int main(int argc, char *argv[]) {
 	QApplication app(argc, argv);
+	QTranslator translator;
+	translator.load(":/translations/nonogram_" + QLocale::system().name());
+	app.installTranslator(&translator);
 	app.setWindowIcon(QIcon(":/icon.png"));
 	MainWindow mw;
 	mw.show();

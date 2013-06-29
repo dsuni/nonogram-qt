@@ -1,33 +1,33 @@
 #include "solver.h"
 
-solver::solver(size_t w, size_t h, vector<size_t> **x, vector<size_t> **y) : width(w), height(h), x_axis_clue(x), y_axis_clue(y) {
+Solver::Solver(size_t w, size_t h, vector<size_t> **x, vector<size_t> **y) : width(w), height(h), xAxisClue(x), yAxisClue(y) {
 	for (size_t i = 0; i < width; ++i) {
 		size_t *temp = new size_t[STAT_SIZE];
 		for (size_t j = 0; j < STAT_SIZE; ++j) {
 			temp[j] = 0;
 		}
-		x_stats.push_back(temp);
+		xStats.push_back(temp);
 	}
 	for (size_t i = 0; i < height; ++i) {
 		size_t *temp = new size_t[STAT_SIZE];
 		for (size_t j = 0; j < STAT_SIZE; ++j) {
 			temp[j] = 0;
 		}
-		y_stats.push_back(temp);
+		yStats.push_back(temp);
 	}
 }
 
-solver::~solver() {
+Solver::~Solver() {
 	for (size_t i = 0; i < width; ++i) {
-		delete[] x_stats.at(i);
+		delete[] xStats.at(i);
 	}
 	for (size_t i = 0; i < height; ++i) {
-		delete[] y_stats.at(i);
+		delete[] yStats.at(i);
 	}
 }
 
-/* When additional information has been received on the x_stats, the corresponding
-   y_stats need to be updated with this information so the it can be used to solve
+/* When additional information has been received on the xStats, the corresponding
+   yStats need to be updated with this information so the it can be used to solve
 	 the puzzle.
 
 	 The mask variable is the bit that should be updated, (if anything is to be). E.g:
@@ -35,47 +35,47 @@ solver::~solver() {
 	 column = 1 -> It's the second most relevant bit that is affected. (0 = most, 3 = least)
 	 mask = 1 << (4 - 1 - 1) -> 00000100
 
-	 The column variable is used against the x_stats variable to check whether the
+	 The column variable is used against the xStats variable to check whether the
 	 corresponding bit is a 1 or not (by using an and operation). If it's a 1, this is
-	 updated to the corresponding y_stats position (defined by the mask variable). It
+	 updated to the corresponding yStats position (defined by the mask variable). It
 	 starts at the most relevant bit and is right shifted one step for every iteration.
  */
-void solver::update_y_stats(size_t column) {
+void Solver::updateYStats(size_t column) {
 	size_t mask = 1 << (width - column - 1);
 	size_t row = 1 << (height - 1);
 	for (size_t i = 0; i < height; ++i) {
-		if (row & x_stats[column][1]) {
-			y_stats[i][1] |= mask;
+		if (row & xStats[column][1]) {
+			yStats[i][1] |= mask;
 		}
-		else if (row & x_stats[column][2]) {
-			y_stats[i][2] |= mask;
+		else if (row & xStats[column][2]) {
+			yStats[i][2] |= mask;
 		}
 		row >>= 1;
 	}
 }
 
 // Same as above function, but other way around.
-void solver::update_x_stats(size_t row) {
+void Solver::updateXStats(size_t row) {
 	size_t mask = 1 << (height - row - 1);
 	size_t column = 1 << (width - 1);
 	for (size_t i = 0; i < width; ++i) {
-		if (column & y_stats[row][1]) {
-			x_stats[i][1] |= mask;
+		if (column & yStats[row][1]) {
+			xStats[i][1] |= mask;
 		}
-		else if (column & y_stats[row][2]) {
-			x_stats[i][2] |= mask;
+		else if (column & yStats[row][2]) {
+			xStats[i][2] |= mask;
 		}
 		column >>= 1;
 	}
 }
 
-void solver::print_result() {
+void Solver::printResult() {
 	for (size_t i = 0; i < height; ++i) {
 		for (size_t j = 1 << (width - 1); j > 0; j >>= 1) {
-			if ((y_stats[i][1] & j) > 0) {
+			if ((yStats[i][1] & j) > 0) {
 				cout << "#";
 			}
-			else if ((y_stats[i][2] & j) > 0) {
+			else if ((yStats[i][2] & j) > 0) {
 				cout << "-";
 			}
 			else {
@@ -86,17 +86,17 @@ void solver::print_result() {
 	}
 }
 
-bool solver::solve() {
-	linesolver lsolver;
+bool Solver::solve() {
+	LineSolver lSolver;
 	bool info_increased;
 	bool is_solved;
 	/* The mask is a variable of n 0's followed by m 1's. By 'or'ing the solids and the dots, and
 		 comparing the result to the mask we know if a line is completely solved or not. E.g.
 		 
-		 height = 4 -> x_mask = 00001111 (meaning the last 4 x_stats bits are relevant)
+		 height = 4 -> x_mask = 00001111 (meaning the last 4 xStats bits are relevant)
 
-		 x_stats[0][1] (solids): 00001101
-		 x_stats[0][2] (dots)  : 00000010
+		 xStats[0][1] (solids): 00001101
+		 xStats[0][2] (dots)  : 00000010
 		 --------------------------------
 		                     or: 00001111 (== x_mask -> solved)
 	*/
@@ -108,19 +108,19 @@ bool solver::solve() {
 		is_solved = true;
 		for (size_t i = 0; i < width; ++i) {
 			// If the line is not already solved, try to solve it.
-			if (!x_stats[i][0]) {
-				lsolver.solve(height, x_stats[i][1], x_stats[i][2], x_axis_clue[i]);
-				result_solid = lsolver.get_solid();
-				result_dot = lsolver.get_dot();
+			if (!xStats[i][0]) {
+				lSolver.solve(height, xStats[i][1], xStats[i][2], xAxisClue[i]);
+				result_solid = lSolver.getSolid();
+				result_dot = lSolver.getDot();
 				// if the result differs from the original, it means we've gotten more information to merge.
-				if (result_solid != x_stats[i][1] || result_dot != x_stats[i][2]) {
+				if (result_solid != xStats[i][1] || result_dot != xStats[i][2]) {
 					info_increased = true;
-					x_stats[i][1] = result_solid;
-					x_stats[i][2] = result_dot;
-					update_y_stats(i);
+					xStats[i][1] = result_solid;
+					xStats[i][2] = result_dot;
+					updateYStats(i);
 				}
-				x_stats[i][0] = ((x_stats[i][1] | x_stats[i][2]) == x_mask);
-				if (!x_stats[i][0]) {
+				xStats[i][0] = ((xStats[i][1] | xStats[i][2]) == x_mask);
+				if (!xStats[i][0]) {
 					is_solved = false;
 				}
 			}
@@ -130,18 +130,18 @@ bool solver::solve() {
 		}
 		is_solved = true;
 		for (size_t i = 0; i < height; ++i) {
-			if (!y_stats[i][0]) {
-				lsolver.solve(width, y_stats[i][1], y_stats[i][2], y_axis_clue[i]);
-				result_solid = lsolver.get_solid();
-				result_dot = lsolver.get_dot();
-				if (result_solid != y_stats[i][1] || result_dot != y_stats[i][2]) {
+			if (!yStats[i][0]) {
+				lSolver.solve(width, yStats[i][1], yStats[i][2], yAxisClue[i]);
+				result_solid = lSolver.getSolid();
+				result_dot = lSolver.getDot();
+				if (result_solid != yStats[i][1] || result_dot != yStats[i][2]) {
 					info_increased = true;
-					y_stats[i][1] = result_solid;
-					y_stats[i][2] = result_dot;
-					update_x_stats(i);
+					yStats[i][1] = result_solid;
+					yStats[i][2] = result_dot;
+					updateXStats(i);
 				}
-				y_stats[i][0] = ((y_stats[i][1] | y_stats[i][2]) == y_mask);
-				if (!y_stats[i][0]) {
+				yStats[i][0] = ((yStats[i][1] | yStats[i][2]) == y_mask);
+				if (!yStats[i][0]) {
 					is_solved = false;
 				}
 			}

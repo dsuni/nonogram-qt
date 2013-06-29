@@ -1,9 +1,9 @@
 #include "linesolver.h"
 
-linesolver::linesolver() {}
+LineSolver::LineSolver() {}
 
-bool linesolver::is_dot_covered (size_t test) {
-	return (test & partial_dot);
+bool LineSolver::isDotCovered (size_t test) {
+	return (test & partialDot);
 }
 
 /* Tests whether the configuration would place a solid next to a known solid
@@ -34,8 +34,8 @@ bool linesolver::is_dot_covered (size_t test) {
    ----------------------
    and:          00000100
 */
-bool linesolver::is_solid_abutted (size_t test) {
-	return ((((test << 1) | (test >> 1) | test) ^ test) & partial_solid);
+bool LineSolver::isSolidAbutted (size_t test) {
+	return ((((test << 1) | (test >> 1) | test) ^ test) & partialSolid);
 }
 
 /* Tests whether a solid is revealed when a block is moved right. "test" here is the
@@ -51,8 +51,8 @@ bool linesolver::is_solid_abutted (size_t test) {
 	 --------------
 	 and:  01100000 (> 00111000 -> a solid has been revealed)
 */
-bool linesolver::is_solid_revealed (size_t test) {
-	return ((partial_solid & (test << 1)) > test);
+bool LineSolver::isSolidRevealed (size_t test) {
+	return ((partialSolid & (test << 1)) > test);
 }
 
 /* Tests whether all predefined solids are covered by the suggested block. The
@@ -63,8 +63,8 @@ bool linesolver::is_solid_revealed (size_t test) {
 	 --------------
 	 and:  01100010 (== solid -> ok)
  */
-bool linesolver::is_solid_match (size_t test) {
-	return ((partial_solid & test) == partial_solid);
+bool LineSolver::isSolidMatch (size_t test) {
+	return ((partialSolid & test) == partialSolid);
 }
 
 /* Creates an integer, which is a bit representation of a block, using its
@@ -89,11 +89,11 @@ bool linesolver::is_solid_match (size_t test) {
 	 -------------------
 	 xor:       00111000
  */
-size_t linesolver::bit_representation_of_block (size_t block_size, size_t position) {
+size_t LineSolver::bitRepresentationOfBlock (size_t block_size, size_t position) {
 	return (((1 << (length - position)) - 1) ^ ((1 << (length - position - block_size)) - 1));
 }
 
-void linesolver::print_bitblock (size_t bitblock) {
+void LineSolver::printBitblock (size_t bitblock) {
 	size_t i = 1 << (length - 1);
 	do {
 		if (bitblock & i) {
@@ -107,13 +107,13 @@ void linesolver::print_bitblock (size_t bitblock) {
 	cout << endl;
 }
 
-void linesolver::print_result () {
+void LineSolver::printResult () {
 	size_t i = 1 << (length - 1);
 	do {
-		if (improved_solid & i) {
+		if (improvedSolid & i) {
 			cout << "#";
 		}
-		else if (improved_dot & i) {
+		else if (improvedDot & i) {
 			cout << "+";
 		}
 		else {
@@ -127,7 +127,7 @@ void linesolver::print_result () {
 // Tries to squeeze out every bit of information that can be squeezed out with the
 // information already available. Will return "false" if additional information
 // can not be found, otherwise "true".
-bool linesolver::solve (size_t block = 0, size_t position = 0, size_t parents = 0) {
+bool LineSolver::solve (size_t block = 0, size_t position = 0, size_t parents = 0) {
 	size_t temp = 0;
 	// Calculate where to stop (because pushing the block any further
 	// would mean that the remaining blocks wouldn't fit).
@@ -138,12 +138,12 @@ bool linesolver::solve (size_t block = 0, size_t position = 0, size_t parents = 
 	size_t rightmost_possible_position = 1 << temp;
 	//int solid = 16744464;
 	//int dot = 50364170;
-	size_t bitblock = bit_representation_of_block(clue->at(block), position);
+	size_t bitblock = bitRepresentationOfBlock(clue->at(block), position);
 	bool done = false;
 	bool lastrun = bitblock & rightmost_possible_position;
 	while (!done) {
 		// If the block fits in the current position, we need to deal with it.
-		if (!is_dot_covered(bitblock) && !is_solid_abutted (bitblock)) {
+		if (!isDotCovered(bitblock) && !isSolidAbutted (bitblock)) {
 			// If we're not on the last block, we move to the next one using recursion.
 			if (block < clue->size() - 1) {
 				if (!solve(block + 1, position + clue->at(block) + 1, parents | bitblock)) {
@@ -151,11 +151,11 @@ bool linesolver::solve (size_t block = 0, size_t position = 0, size_t parents = 
 				}
 			}
 			// If we *are* on the last block, we check if it's a possible solution, which we add.
-			else if (is_solid_match(temp = parents | bitblock)) {
-				improved_solid &= temp;
-				improved_dot |= temp;
+			else if (isSolidMatch(temp = parents | bitblock)) {
+				improvedSolid &= temp;
+				improvedDot |= temp;
 				// It's impossible to squeeze out any additional information with this clue.
-				if (improved_solid == partial_solid && improved_dot == improved_dot_mask - partial_dot) {
+				if (improvedSolid == partialSolid && improvedDot == improvedDotMask - partialDot) {
 					return false;
 				}
 			}
@@ -163,7 +163,7 @@ bool linesolver::solve (size_t block = 0, size_t position = 0, size_t parents = 
 		// Move the block one notch forward.
 		bitblock >>= 1;
 		++position;
-		if (lastrun || is_solid_revealed(bitblock)) {
+		if (lastrun || isSolidRevealed(bitblock)) {
 			done = true;
 		}
 		else if (bitblock & rightmost_possible_position) {
@@ -173,35 +173,35 @@ bool linesolver::solve (size_t block = 0, size_t position = 0, size_t parents = 
 	return true;
 }
 
-void linesolver::solve(size_t l, size_t ps, size_t pd, vector<size_t> *c) {
+void LineSolver::solve(size_t l, size_t ps, size_t pd, vector<size_t> *c) {
 	length = l;
-	partial_solid = ps;
-	partial_dot = pd;
+	partialSolid = ps;
+	partialDot = pd;
 	clue = c;
 	// The situation where the hint is "0" (i.e. line is all dots), is a special
 	// situation. Fortunately it's very easy to deal with.
 	if (c->at(0) == 0) {
-		improved_solid = 0;
-		improved_dot = 0;
-		improved_dot_mask = (1 << length) - 1;
+		improvedSolid = 0;
+		improvedDot = 0;
+		improvedDotMask = (1 << length) - 1;
 	}
 	// Normally we do this.
 	else {
-		improved_solid = (size_t)-1;
-		improved_dot = 0;
-		improved_dot_mask = (1 << length) - 1;
+		improvedSolid = (size_t)-1;
+		improvedDot = 0;
+		improvedDotMask = (1 << length) - 1;
 		solve();
 	}
 }
 
-size_t linesolver::get_solid() {
-	return improved_solid;
+size_t LineSolver::getSolid() {
+	return improvedSolid;
 }
 
-/* The bits of the "improved_dot" variable are flipped because it's easier to build that way.
+/* The bits of the "improvedDot" variable are flipped because it's easier to build that way.
 	 This does not apply to the leading bits, though, so before it's returned we need to xor it
 	 against a number that is all 0's for the leading bits, and all 1's for the active bits.
  */
-size_t linesolver::get_dot() {
-	return (improved_dot_mask ^ improved_dot);
+size_t LineSolver::getDot() {
+	return (improvedDotMask ^ improvedDot);
 }

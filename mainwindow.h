@@ -48,13 +48,13 @@ class MainWindow : public QMainWindow {
 	QSignalMapper *mapperLeftButton;
 	QSignalMapper *mapperRightButton;
 	vector<PushButton*> puzzle;
-	vector<QLabel*> x_axis, y_axis;
-	vector<size_t> **x_axis_clue;
-	vector<size_t> **y_axis_clue;
+	vector<QLabel*> xAxis, yAxis;
+	vector<size_t> **xAxisClue;
+	vector<size_t> **yAxisClue;
 	vector<int> status;
 	int width, height, mouseButton;
 	bool firstClick, lockAction;
-	nonogram *ngram;
+	Nonogram *ngram;
 	void cleanUp();
 
  public:

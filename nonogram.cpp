@@ -1,41 +1,41 @@
 #include "nonogram.h"
 
-nonogram::nonogram(int w, int h) : width(w), height(h), solids(0), dots(0), field(new size_t[h]) {
-if ((x_axis = (vector<size_t>**)malloc(width * sizeof(vector<size_t>*))) == NULL ||
-		(y_axis = (vector<size_t>**)malloc(height * sizeof(vector<size_t>*))) == NULL) {
+Nonogram::Nonogram(int w, int h) : width(w), height(h), solids(0), dots(0), field(new size_t[h]) {
+if ((xAxis = (vector<size_t>**)malloc(width * sizeof(vector<size_t>*))) == NULL ||
+		(yAxis = (vector<size_t>**)malloc(height * sizeof(vector<size_t>*))) == NULL) {
 	cerr << "ERROR: Malloc failed." << endl;
 	exit(1);
  }
-	generate_field();
-	generate_puzzle();
+	generateField();
+	generatePuzzle();
 }
 
-nonogram::~nonogram() {
+Nonogram::~Nonogram() {
 	delete[] field;
 	for (size_t i = 0; i < width; ++i) {
-		delete x_axis[i];
+		delete xAxis[i];
 	}
 	for (size_t i = 0; i < height; ++i) {
-		delete y_axis[i];
+		delete yAxis[i];
 	}
-	free(x_axis);
-	free(y_axis);
+	free(xAxis);
+	free(yAxis);
 }
 
-vector<size_t>** nonogram::get_x_axis() {
-	return x_axis;
+vector<size_t>** Nonogram::getXAxis() {
+	return xAxis;
 }
 
-vector<size_t>** nonogram::get_y_axis() {
-	return y_axis;
+vector<size_t>** Nonogram::getYAxis() {
+	return yAxis;
 }
 
-size_t* nonogram::get_field() {
+size_t* Nonogram::getField() {
 	return field;
 }
 
 // Prints the puzzle. Mostly usable for debugging.
-void nonogram::print() {
+void Nonogram::print() {
 	for (size_t i = 0; i < height; ++i) {
 		for (size_t j = (1 << (width - 1)); j > 0; j >>= 1) {
 			if (field[i] & j) {
@@ -50,15 +50,15 @@ void nonogram::print() {
 }
 
 // Generates the puzzle (i.e. the numbers shown to the user) from the existing field.
-void nonogram::generate_puzzle() {
+void Nonogram::generatePuzzle() {
 	size_t temp;
 	for (size_t i = 0; i < height; ++i) {
 		temp = 0;
-		y_axis[i] = new vector<size_t>;
+		yAxis[i] = new vector<size_t>;
 		for (size_t j = (1 << (width - 1)); j > 0; j >>= 1) {
 			if (!(field[i] & j)) {
 				if (temp > 0) {
-					y_axis[i]->push_back(temp);
+					yAxis[i]->push_back(temp);
 				}
 				temp = 0;
 			}
@@ -66,19 +66,19 @@ void nonogram::generate_puzzle() {
 				++temp;
 			}
 		}
-		if (temp > 0 || y_axis[i]->size() == 0) {
-			y_axis[i]->push_back(temp);
+		if (temp > 0 || yAxis[i]->size() == 0) {
+			yAxis[i]->push_back(temp);
 		}
 	}
 	size_t mask = 1 << width;
 	for(size_t i = 0; i < width; ++i) {
 		mask >>= 1;
-		x_axis[i] = new vector<size_t>;
+		xAxis[i] = new vector<size_t>;
 		temp = 0;
 		for (size_t j = 0; j < height; ++j) {
 			if (!(field[j] & mask)) {
 				if (temp > 0) {
-					x_axis[i]->push_back(temp);
+					xAxis[i]->push_back(temp);
 				}
 				temp = 0;
 			}
@@ -86,14 +86,14 @@ void nonogram::generate_puzzle() {
 				++temp;
 			}
 		}
-		if (temp > 0 || x_axis[i]->size() == 0) {
-			x_axis[i]->push_back(temp);
+		if (temp > 0 || xAxis[i]->size() == 0) {
+			xAxis[i]->push_back(temp);
 		}
 	}
 }
 
 // Generate a semi-random playing field.
-void nonogram::generate_field() {
+void Nonogram::generateField() {
 	int random, above, left;
 	size_t mask = 1 << (width - 1);
 	double prob;
@@ -132,7 +132,7 @@ void nonogram::generate_field() {
 	 and we'd rather see that the black & white fields are (again roughly) collected
 	 in "islands" rather than a chessboard-type distribution.
 */
-double nonogram::probability(int above, int left) {
+double Nonogram::probability(int above, int left) {
 	double p = 0.5;
 	switch (above + left) {
 	case -2:
