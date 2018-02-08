@@ -3,5 +3,6 @@
 	<file>icon.png</file>
 	<file>translations/nonogram_sv.qm</file>
 	<file>translations/nonogram_fi.qm</file>
+	<file>translations/nonogram_cs.qm</file>
 </qresource>
 </RCC>
