@@ -10,7 +10,7 @@
 #include <QHBoxLayout>
 #include <QSpinBox>
 #include <QMessageBox>
-#include <QGtkStyle>
+#include <QCommonStyle>
 #include <QSignalMapper>
 #include <QString>
 #include <vector>
@@ -40,7 +40,7 @@ class MainWindow : public QMainWindow {
 	QVBoxLayout *layout;
 	QHBoxLayout *top;
 	QGridLayout *grid;
-	QGtkStyle *style;
+	QCommonStyle *style;
 	QLabel *widthLabel;
 	QLabel *heightLabel;
 	QPushButton *generate;

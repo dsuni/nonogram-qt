@@ -4,6 +4,7 @@
 #include <QDrag>
 #include <QDragEnterEvent>
 #include <QMouseEvent>
+#include <QMimeData>
 
 #define SIZE 20
 
@@ -13,6 +14,7 @@ class PushButton : public QPushButton {
  private:
 	int *button;
 	bool *first;
+	bool processed;
 
  public:
 	PushButton(int *b, bool *f, QWidget *parent = 0);
@@ -20,7 +22,7 @@ class PushButton : public QPushButton {
  protected:
 	void dragEnterEvent(QDragEnterEvent *e);
 	void mousePressEvent(QMouseEvent *e);
-
+	
  signals:
 	void solid();
 	void dot();

@@ -9,6 +9,7 @@ PushButton::PushButton(int *b, bool *f, QWidget *parent) : button(b), first(f), 
 	setStyleSheet("background-color: rgb(215, 215, 215)");
 	setMinimumSize(SIZE, SIZE);
 	setMaximumSize(SIZE, SIZE);
+	processed = false;
 }
 
 void PushButton::mousePressEvent(QMouseEvent *e) {
@@ -17,6 +18,13 @@ void PushButton::mousePressEvent(QMouseEvent *e) {
 	}
 	*(button) = e->button();
 	*(first) = true;
+	processed = true;
+	if (e->button() == Qt::LeftButton) {
+		emit solid();
+	}
+	else {
+		emit dot();
+	}
 	// Qt will clean up the QDrag and associated QMimeData objects, so they mustn't be deleted.
 	QDrag *drag = new QDrag(this);
 	QMimeData *md = new QMimeData();
@@ -26,7 +34,11 @@ void PushButton::mousePressEvent(QMouseEvent *e) {
 	emit released();
 }
 
-void PushButton::dragEnterEvent(QDragEnterEvent *e) {	
+void PushButton::dragEnterEvent(QDragEnterEvent *e) {
+	if (processed) {
+		processed = false;
+		return;
+	}
 	if (*(button) == Qt::LeftButton) {
 		emit solid();
 	}

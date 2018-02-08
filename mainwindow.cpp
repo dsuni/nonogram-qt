@@ -22,7 +22,7 @@ MainWindow::MainWindow(QWidget *parent) {
 	grid = new QGridLayout(window);
 	grid->setSpacing(0);
 	grid->setAlignment(Qt::AlignTop | Qt::AlignLeft);
-	style = new QGtkStyle();
+	style = new QCommonStyle();
 	widthBox = new QSpinBox(window);
 	heightBox = new QSpinBox(window);
 	widthBox->setRange(MIN_PUZZLE_SIZE, MAX_PUZZLE_SIZE);
@@ -249,7 +249,7 @@ void MainWindow::dotClicked(int position) {
 
 // Check whether the puzzle is solved or not. Display a message if it is.
 void MainWindow::checkSolution() {
-	// Since this function is called when the mous button is released,
+	// Since this function is called when the mouse button is released,
 	// we use it to unset the lockAction variable.
 	lockAction = false;
 	for (int i = 0; i < height; ++i) {
@@ -281,7 +281,7 @@ void MainWindow::checkSolution() {
 void MainWindow::about() {
 	QMessageBox mb;
 	mb.setWindowTitle(tr("About"));
-	mb.setText(tr("<p><h3>Nonogram-qt 1.0.0</h3></p><p>Copyright: Daniel Suni, 2012, 2013</p><p>Distributed under the GNU GPL v3</p>"));
+	mb.setText(tr("<p><h3>Nonogram-qt 1.0.0</h3></p><p>Copyright: Daniel Suni, 2012, 2013, 2018</p><p>Distributed under the GNU GPL v3</p>"));
 	mb.exec();
 }
 

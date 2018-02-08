@@ -3,8 +3,7 @@ Nonogram-qt is a puzzle game that will generate (semi)random nonogram puzzles, a
 solve them. Please see https://en.wikipedia.org/wiki/Nonogram for more info on nonograms.
 
 DEPENDENCIES:
-Nonogram-qt requires Qt4 to work. (It is not yet tested on the, at the time of this writing, very, very
-new Qt5.)
+Nonogram-qt requires Qt5 to work. If you want to use Qt4, please stick with the older version (1.0.0)
 
 LICENSE:
 Nonogram-qt and all its components is distributed under the GNU GPL v3 (or later). Please see the file
