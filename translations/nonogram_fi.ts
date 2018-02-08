@@ -61,8 +61,8 @@
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="284"/>
-        <source>&lt;p&gt;&lt;h3&gt;Nonogram-qt 1.0.0&lt;/h3&gt;&lt;/p&gt;&lt;p&gt;Copyright: Daniel Suni, 2012, 2013&lt;/p&gt;&lt;p&gt;Distributed under the GNU GPL v3&lt;/p&gt;</source>
-        <translation>&lt;p&gt;&lt;h3&gt;Nonogram-qt 1.0.0&lt;/h3&gt;&lt;/p&gt;&lt;p&gt;Copyright: Daniel Suni, 2012, 2013&lt;/p&gt;&lt;p&gt;Julkaistu GNU GPL v3:n alla&lt;/p&gt;</translation>
+        <source>&lt;p&gt;&lt;h3&gt;Nonogram-qt 1.1.1&lt;/h3&gt;&lt;/p&gt;&lt;p&gt;Copyright: Daniel Suni, 2012, 2013, 2018&lt;/p&gt;&lt;p&gt;Distributed under the GNU GPL v3&lt;/p&gt;</source>
+        <translation>&lt;p&gt;&lt;h3&gt;Nonogram-qt 1.1.1&lt;/h3&gt;&lt;/p&gt;&lt;p&gt;Copyright: Daniel Suni, 2012, 2013, 2018&lt;/p&gt;&lt;p&gt;Julkaistu GNU GPL v3:n alla&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="290"/>
