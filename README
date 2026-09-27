@@ -3,7 +3,7 @@ Nonogram-qt is a puzzle game that will generate (semi)random nonogram puzzles, a
 solve them. Please see https://en.wikipedia.org/wiki/Nonogram for more info on nonograms.
 
 DEPENDENCIES:
-Nonogram-qt requires Qt5 to work. If you want to use Qt4, please stick with the older version (1.0.0)
+Nonogram-qt requires Qt 6 to work.
 
 LICENSE:
 Nonogram-qt and all its components is distributed under the GNU GPL v3 (or later). Please see the file
@@ -13,7 +13,7 @@ INSTALLATION:
 In addition to a C++ compatible compiler (such as g++) & toolchain you need the Qt development libraries
 installed. Once you have these, simply run:
 
-qmake && make
+qmake6 && make
 
 This should produce a stand-alone executable named "nonogram-qt". You can use this locally, or if you
 have admin privileges install it system wide by running e.g.

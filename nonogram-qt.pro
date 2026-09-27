@@ -2,8 +2,8 @@ TEMPLATE = app
 TARGET = nonogram-qt
 DEPENDPATH += .
 INCLUDEPATH += .
-QT += core gui
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+lessThan(QT_MAJOR_VERSION, 6): error("nonogram-qt requires Qt 6")
+QT += core gui widgets
 
 # Input
 HEADERS += linesolver.h mainwindow.h nonogram.h pushbutton.h solver.h

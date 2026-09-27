@@ -157,8 +157,8 @@ void MainWindow::generatePuzzle() {
 			grid->addWidget(puzzle.at(pos), i + spacer_y + 1, j + spacer_x + 1);
 		}
 	}
-	connect(mapperLeftButton, SIGNAL(mapped(int)), this, SLOT(solidClicked(int)));
-	connect(mapperRightButton, SIGNAL(mapped(int)), this, SLOT(dotClicked(int)));
+	connect(mapperLeftButton, SIGNAL(mappedInt(int)), this, SLOT(solidClicked(int)));
+	connect(mapperRightButton, SIGNAL(mappedInt(int)), this, SLOT(dotClicked(int)));
 	// Enable button that lets user see the solution without solving
 	surrender->setEnabled(true);
 }

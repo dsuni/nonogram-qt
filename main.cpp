@@ -1,7 +1,7 @@
 /*
-	nonogram-qt version 1.0.0, released 29 Jun 2013
+	nonogram-qt version 1.2.0, released 27 Sep 2026
 
-	Copyright 2012, 2013 Daniel Suni
+	Copyright 2012, 2013, 2018, 2026 Daniel Suni
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <QApplication>
+#include <QIcon>
 #include <QTranslator>
 #include <QLocale>
 #include "mainwindow.h"
